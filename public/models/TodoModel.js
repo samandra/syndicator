@@ -1,9 +1,10 @@
 var TodoModel = Backbone.Model.extend({
 
-    id: 67,
-	url: function(){
-        return "/api/todos/" + this.id || "";
-    },
+	urlRoot: "/api/todos/",
+
+	//url: function(){
+    //    return "/api/todos/" + this.id || "";
+    //},
 
 	defaults : {
 		title : "title"

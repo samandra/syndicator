@@ -20,7 +20,7 @@ app.post('/api/todos', function(req, res) {
     todo.id = Date.now().toString(); // You probably want to swap this for something like https://github.com/dylang/shortid
  
     todos.insert(todo, {safe: true}).done(function(todo) {
-        res.json(todo, 201);
+        res.json(todo[0], 201);
     });
 });
  
@@ -37,10 +37,13 @@ app.get('/api/todos/:id', function(req, res) {
 });
  
 app.put('/api/todos/:id', function(req, res) {
-    var score = req.body;
- 
+    var todo = req.body;
+    console.log('todo is :',todo);
+    delete todo["_id"];
     todos.update({id: req.params.id}, {$set: todo}, {safe: true}).done(function(success) {
         res.json(success ? 200 : 404);
+    }).fail(function(r){
+		console.log('failed :',r);
     });
 });
 
