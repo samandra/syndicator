@@ -19,19 +19,19 @@ app.post('/api/todos', function(req, res) {
     var todo = req.body;
     todo.id = Date.now().toString(); // You probably want to swap this for something like https://github.com/dylang/shortid
  
-    db.collection('todos').insert(todo, {safe: true}).done(function(todo) {
+    todos.insert(todo, {safe: true}).done(function(todo) {
         res.json(todo, 201);
     });
 });
  
 app.get('/api/todos', function(req, res) {
-    db.collection('todos').find().skip(req.query.skip || 0).limit(req.query.limit || 0).toArray().done(function(todos) {
+    todos.find().skip(req.query.skip || 0).limit(req.query.limit || 0).toArray().done(function(todos) {
         res.json(todos);
     });
 });
 
 app.get('/api/todos/:id', function(req, res) {
-    db.collection('todos').findOne({id: req.params.id}).done(function(todo) {
+    todos.findOne({id: req.params.id}).done(function(todo) {
         res.json(todo);
     });
 });
@@ -39,13 +39,13 @@ app.get('/api/todos/:id', function(req, res) {
 app.put('/api/todos/:id', function(req, res) {
     var score = req.body;
  
-    db.collection('todos').update({id: req.params.id}, {$set: todo}, {safe: true}).done(function(success) {
+    todos.update({id: req.params.id}, {$set: todo}, {safe: true}).done(function(success) {
         res.json(success ? 200 : 404);
     });
 });
 
 app.del('/api/todos/:id', function(req, res) {
-    db.collection('todos').remove({id: req.params.id}, {safe: true}).done(function(success) {
+    todos.remove({id: req.params.id}, {safe: true}).done(function(success) {
         res.json(success ? 200 : 404);
     });
 });
