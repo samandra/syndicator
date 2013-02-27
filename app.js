@@ -11,7 +11,6 @@ testCollection.count()
 
 var express = require('express');
 var app = express();
-
 app.use(express.bodyParser()); // Automatically parse JSON in POST requests
 app.use(express.static(__dirname + '/public')); // Serve static files from public (e.g http://localhost:8080/index.html)
 app.use(express.errorHandler({dumpExceptions: true, showStack: true})); // Dump errors
@@ -51,4 +50,4 @@ app.del('/api/todos/:id', function(req, res) {
     });
 });
 
-app.listen(80);
+app.listen(9080);
