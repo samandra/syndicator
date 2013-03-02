@@ -1,32 +1,30 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         syndicate : {
-            "modelsFolder" : "public/models",
-            "collectionsFolder" : "public/collections"
+            "models" : ["public/models/*"],
+            "collections" : ["public/collections/*"],
+            'dest' : ["dest/"],
+
         }
     });
 
     grunt.registerTask('syndicate', function(a){
 
+        var conf = function(c){
+            return grunt.config("syndicate." + c);
+        }
 
+        var modelFiles = grunt.file.expand(conf('models'));
+        var collectionFiles = grunt.file.expand(conf("collections"));
 
-        console.log(arguments);
+        grunt.util._.each(modelFiles,function(modelFile){
+            file = grunt.file.read(modelFile);
+            console.log('file is :', modelFile);
+            var url = file.match(/url\s*\:\s*[\',\"](.*)[\',\"]\s*,/)[1] || "";
+            console.log("url is :", url);
+            grunt.file.write(conf("dest"), url);
+        });
 
-        console.dir(grunt.config);
-
-        var modelsFolder = grunt.config('syndicate.modelsFolder');
-        var collectionsFolders = grunt.config('syndicate.collectionsFolder');
-
-
-
-        console.dir(this.files);
-
-        // first read collections
-        var file = grunt.file.read("public/models/TodoModel.js");
-
-        var url = file.match(/url\s*\:\s*[\',\"](.*)[\',\"]\s*,/)[1] || "";
-
-        console.log("url is :", url);
 
     });
 
