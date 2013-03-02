@@ -7,7 +7,11 @@ module.exports = function(grunt) {
 
     grunt.registerTask('syndicate', function(){
         console.log('syndicating this shit');
-        console.dir(this.options);
+        console.dir(this.options());
+        var file = grunt.file.read("public/models/TodoModel.js");
+        console.log("file is :", file);
+
+
     });
 
     grunt.registerTask('default', 'syndicate');
