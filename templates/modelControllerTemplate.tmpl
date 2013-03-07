@@ -1,0 +1,62 @@
+
+module.exports = function(app, db) {
+
+    db.collectionNames().done(function(names){
+        var exists = false;
+        for (var i=0; i<names.length; i++){
+            if (names[i].name == db.name+".{{name}}"){
+                exists = true;
+            }
+        }
+        if (!exists) {
+            db.createCollection("{{name}}").done(function(dbCollection){
+                bindEndpoints(dbCollection);
+            })
+        } else {
+            var dbCollection = db.collection("{{name}}");
+            bindEndpoints(dbCollection);
+        }
+    });
+
+    var bindEndpoints = function(dbCollection){
+
+        app.post('{{url}}', function(req, res) {
+            var model = req.body;
+            model.id = Date.now().toString();
+         
+            dbCollection.insert(model, {safe: true}).done(function(model) {
+                res.json(model[0], 201);
+            });
+        });
+         
+        app.get('{{url}}', function(req, res) {
+            dbCollection.find().skip(req.query.skip || 0).limit(req.query.limit || 0).toArray().done(function(models) {
+                res.json(models);
+            });
+        });
+
+        app.get('{{url}}/:id', function(req, res) {
+            dbCollection.findOne({id: req.params.id}).done(function(model) {
+                res.json(model);
+            });
+        });
+         
+        app.put('{{url}}', function(req, res) {
+            var model = req.body;
+            console.log('model is :',model);
+            delete model["_id"];
+            dbCollection.update({id: req.params.id}, {$set: model}, {safe: true}).done(function(success) {
+                res.json(success ? 200 : 404);
+            }).fail(function(r){
+        		console.log('failed :',r);
+            });
+        });
+
+        app.del('{{url}}/:id', function(req, res) {
+            dbCollection.remove({id: req.params.id}, {safe: true}).done(function(success) {
+                res.json(success ? 200 : 404);
+            });
+        });
+    }
+
+}
