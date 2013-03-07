@@ -5,8 +5,8 @@ module.exports = function(grunt) {
             "collections" : ["public/collections/*"],
             'dest' : "dist",
             'port' : 9080,
-            'name' : 'Syndicate Test App',
-            'version': '1'
+            'name' : 'SyndicateTestApp',
+            'version': '0.0.1'
         }
     });
 
@@ -27,10 +27,8 @@ module.exports = function(grunt) {
 
         /* generate app.js file */
         var appJSTemplate = grunt.file.read("templates/appJSTemplate.tmpl", {encoding: FILE_ENCODING});
-        var port = 8080;
-        if(conf("port")) {
-            port = conf("port");
-        }
+        var port = conf("port") || 8080;
+
         var appJSData = {port: port};
         var appJSResult = Handlebars.compile(appJSTemplate)(appJSData);
         grunt.file.write(DESTINATION+"/app.js", appJSResult, {encoding: FILE_ENCODING});
@@ -43,8 +41,15 @@ module.exports = function(grunt) {
         var version = conf('version') || '0.1.0';
         var packageJsonData = {name: name, version: version};
         var packageJsonResult = Handlebars.compile(packageJsonTemplate)(packageJsonData);
-        grunt.file.write(DESTINATION+"/package.json", packageJsonResult, {encoding: FILE_ENCODING});    
-        console.log("package.json file generated");        
+
+        grunt.file.write(DESTINATION+"/package.json", packageJsonResult, {encoding: FILE_ENCODING});
+        console.log("package.json file generated");
+
+        var sys = require('sys');
+        var exec = require('child_process').exec;
+        function puts(error, stdout, stderr) { sys.puts(stdout); }
+        exec("cd "+DESTINATION+";npm install", puts);
+
         /* package.json file generated */
 
         /* create punlic and server folders under dist */
