@@ -18,13 +18,13 @@ module.exports = function(grunt) {
 
         var Handlebars = require('Handlebars');
         var FILE_ENCODING = 'utf-8';
+        var DESTINATION = conf('dest') || 'dist';
 
         /* create folder if not exists */
-        var dest = conf('dest') || 'dist';
-        if(!grunt.file.isDir(dest)){
-            grunt.file.mkdir(dest);
+        if(!grunt.file.isDir(DESTINATION)){
+            grunt.file.mkdir(DESTINATION);
         }
-        
+
         /* generate app.js file */
         var appJSTemplate = grunt.file.read("templates/appJSTemplate.tmpl", {encoding: FILE_ENCODING});
         var port = 8080;
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
         }
         var appJSData = {port: port};
         var appJSResult = Handlebars.compile(appJSTemplate)(appJSData);
-        grunt.file.write(conf("dest")+"/app.js", appJSResult, {encoding: FILE_ENCODING});
+        grunt.file.write(DESTINATION+"/app.js", appJSResult, {encoding: FILE_ENCODING});
         console.log("app.js file generated");
         /* app.js file generated */
 
@@ -43,15 +43,16 @@ module.exports = function(grunt) {
         var version = conf('version') || '0.1.0';
         var packageJsonData = {name: name, version: version};
         var packageJsonResult = Handlebars.compile(packageJsonTemplate)(packageJsonData);
-        grunt.file.write(conf("dest")+"/package.json", packageJsonResult, {encoding: FILE_ENCODING});    
+        grunt.file.write(DESTINATION+"/package.json", packageJsonResult, {encoding: FILE_ENCODING});    
         console.log("package.json file generated");        
         /* package.json file generated */
 
-/*        var appJSData = {port:port};
-        var appJSResult = Handlebars.compile(ft)
-        var modelFiles = grunt.file.expand(conf('models'));
-        var collectionFiles = grunt.file.expand(conf("collections"));
+        /* create punlic and server folders under dist */
+        grunt.file.mkdir(DESTINATION+"/public");
+        grunt.file.mkdir(DESTINATION+"/server");
 
+
+        /*        
         grunt.util._.each(modelFiles,function(modelFile){
 
             file = grunt.file.read(modelFile);
@@ -60,15 +61,7 @@ module.exports = function(grunt) {
             console.log("url is :", url);
             // grunt.file.write(conf("dest"), url);
         });
-
-
-        
-        var ftt = Handlebars.compile(ft);
-        var data = {name: "Ali", shit: "Cüneyt"};
-        var result = ftt(data);
-
-        grunt.file.write(conf("dest")+"/firstshit", result, {encoding: FILE_ENCODING});
-        console.log("file:", result);*/
+        */
     });
 
     grunt.registerTask('default', 'syndicate');
