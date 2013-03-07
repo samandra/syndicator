@@ -1,7 +1,19 @@
 var express = require('express');
 var app = express();
+var mongoq = require("mongoq");
+
 app.use(express.bodyParser()); // Automatically parse JSON in POST requests
 app.use(express.static(__dirname + '/public')); // Serve static files from public (e.g http://localhost:8080/index.html)
 app.use(express.errorHandler({dumpExceptions: true, showStack: true})); // Dump errors
 
 app.listen({{port}});
+
+var db = mongoq('mongodb://{{dbuser}}:{{dbpassword}}@{{dbhost}}:{{dbport}}/{{dbname}}');
+
+{{#each models}}
+require('./server/controllers/{{this.name}}Controller')(app, db);
+{{/each}}
+
+{{#each collections}}
+require('./server/controllers/{{this.name}}Controller')(app, db);
+{{/each}}

@@ -1,6 +1,6 @@
 var TodoModel = Backbone.Model.extend({
 
-    url: "/api/todos/",
+    urlRoot: "/api/todos/",
 
 	defaults : {
 
