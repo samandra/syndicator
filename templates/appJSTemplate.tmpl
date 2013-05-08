@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
-var mongoq = require("mongoq");
+//var mongoq = require("mongoq");
+var MongoDB     = require('mongodb').Db;
+var Server      = require('mongodb').Server;
 
 app.use(express.bodyParser()); // Automatically parse JSON in POST requests
 app.use(express.static(__dirname + '/public')); // Serve static files from public (e.g http://localhost:8080/index.html)
@@ -8,7 +10,24 @@ app.use(express.errorHandler({dumpExceptions: true, showStack: true})); // Dump 
 
 app.listen({{port}});
 
-var db = mongoq('mongodb://{{dbuser}}:{{dbpassword}}@{{dbhost}}:{{dbport}}/{{dbname}}');
+//var db = mongoq('mongodb://{{dbuser}}:{{dbpassword}}@{{dbhost}}:{{dbport}}/{{dbname}}');
+/* establish the database connection */
+var db = new MongoDB("{{dbname}}", new Server("{{dbhost}}", {{dbport}}, {auto_reconnect: true}), {w: 1});
+    db.open(function(e, d){
+        /* authenticate db admin */
+        d.authenticate("{{dbuser}}", "{{dbpassword}}", function(err){
+            if(err){
+                console.log("error while authenticating database");
+            } else {
+                console.log("authenticated to database");
+            }
+        });
+    if (e) {
+        console.log(e);
+    }   else{
+        console.log('connected to database :: ' + "//{{dbuser}}:{{dbpassword}}@{{dbhost}}:{{dbport}}/{{dbname}}");
+    }
+});
 
 {{#each models}}
 require('./server/controllers/{{this.name}}Controller')(app, db);

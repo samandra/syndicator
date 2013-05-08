@@ -7,11 +7,13 @@ module.exports = function(grunt) {
             'port' : 9080,
             'name' : 'SyndicateTestApp',
             'version': '0.0.1',
-            'dbname': 'owl',
-            'dbport': 10056,
+
+            //mongoDB configuration
+            'dbname': 'kiks',
+            'dbport': 10081,
             'dbhost': "dharma.mongohq.com",
-            'dbuser': 'testo',
-            'dbpassword': 'testo'
+            'dbuser': 'admin',
+            'dbpassword': 'pass'
 
         }
     });
@@ -22,38 +24,49 @@ module.exports = function(grunt) {
             return grunt.config("syndicate." + c);
         }
 
-        /* create punlic and server folders under dist */
-        grunt.file.mkdir(DESTINATION+"/public");
-        grunt.file.mkdir(DESTINATION+"/server");
-        grunt.file.mkdir(DESTINATION+"/server/controllers");
 
         var Handlebars = require('Handlebars');
         var FILE_ENCODING = 'utf-8';
         var DESTINATION = conf('dest') || 'dist';
 
+
         /* create folder if not exists */
         if(!grunt.file.isDir(DESTINATION)){
             grunt.file.mkdir(DESTINATION);
         }
+        /* create punlic and server folders under dist */
+        grunt.file.mkdir(DESTINATION+"/public");
+        grunt.file.mkdir(DESTINATION+"/server");
+        grunt.file.mkdir(DESTINATION+"/server/controllers");
 
         var modelFiles = grunt.file.expand(conf('models'));
         var collectionFiles = grunt.file.expand(conf("collections"));
 
         var models = [], collections = [];
 
+        console.log("model fies", modelFiles);
         grunt.util._.each(modelFiles,function(modelFile){
 
             file = grunt.file.read(modelFile);
             console.log('file is :', modelFile);
-            var url = file.match(/url\s*\:\s*[\',\"](.*)\/?[\',\"]\s*,/)[1] || "";
-            var modelName = file.match(/var\s*(\S*)\s*=/)[1] || false;
+            try{
+                var url = file.match(/url\w*\s*:\s*[\'\"](.*)[\'\"]/)[1] || "";
+                console.log("genareted url name: ", url);
+            } catch(e){
+                console.log("error could not read url from model file");
+            }
+            //console.log(file.match(/url\s*\:\s*[\',\"](.*)\/?[\',\"]\s*,/), file);
+            try {
+                var modelName = file.match(/var\s*(\S*)\s*=/)[1] || false;
+                console.log("generated model name", modelName);
+            } catch(e){
+                console.log("error could not read model name from model file");
+            }
 
+            // remove extra / in url
             if(url[url.length-1] == "/"){
                 url = url.substr(0,url.length-1);
             }
-
-            console.log("model name : ",modelName);
-            console.log("url is :", url);
 
             if (modelName!==false){
                 models.push({
