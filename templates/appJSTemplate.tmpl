@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-//var mongoq = require("mongoq");
+var mongoq = require("mongoq");
 var MongoDB     = require('mongodb').Db;
 var Server      = require('mongodb').Server;
 
@@ -10,11 +10,11 @@ app.use(express.errorHandler({dumpExceptions: true, showStack: true})); // Dump 
 
 app.listen({{port}});
 
-//var db = mongoq('mongodb://{{dbuser}}:{{dbpassword}}@{{dbhost}}:{{dbport}}/{{dbname}}');
-/* establish the database connection */
+var db = mongoq('mongodb://{{dbuser}}:{{dbpassword}}@{{dbhost}}:{{dbport}}/{{dbname}}');
+/* establish the database connection 
 var db = new MongoDB("{{dbname}}", new Server("{{dbhost}}", {{dbport}}, {auto_reconnect: true}), {w: 1});
     db.open(function(e, d){
-        /* authenticate db admin */
+        
         d.authenticate("{{dbuser}}", "{{dbpassword}}", function(err){
             if(err){
                 console.log("error while authenticating database");
@@ -27,7 +27,7 @@ var db = new MongoDB("{{dbname}}", new Server("{{dbhost}}", {{dbport}}, {auto_re
     }   else{
         console.log('connected to database :: ' + "//{{dbuser}}:{{dbpassword}}@{{dbhost}}:{{dbport}}/{{dbname}}");
     }
-});
+});*/
 
 {{#each models}}
 require('./server/controllers/{{this.name}}Controller')(app, db);
